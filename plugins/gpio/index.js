@@ -79,7 +79,7 @@ define([ 'rpi-gpio' ], function(gpio) {
           direction: 'input'
         }).toArray(function(err, result) {
           result.forEach(function(item) {
-            gpio.setDirection(parseInt(item.pin), "input", function(err) {
+			gpio.setup(parseInt(item.pin), gpio.DIR_IN, function(error) {
               gpio.read(parseInt(item.pin), function(err, value) {
                 if (!err) {
                   that.values[item._id] = value;
@@ -88,8 +88,8 @@ define([ 'rpi-gpio' ], function(gpio) {
                     value: value
                   });
                 }
-              });
-            });
+			  });
+			});
           });
         });
       });
