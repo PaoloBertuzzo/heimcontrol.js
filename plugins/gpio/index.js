@@ -2,7 +2,7 @@ if (typeof define !== 'function') {
   var define = require('amdefine')(module);
 }
 
-define([ 'rpi-gpio' ], function(gpio) {
+define([ 'rpio' ], function(gpio) {
 
   /**
    * Gpio Plugin. Can access the GPIO on the Raspberry PI
@@ -51,18 +51,15 @@ define([ 'rpi-gpio' ], function(gpio) {
     var that = this;
     this.pluginHelper.findItem(this.collection, data.id, function(err, item, collection) {
       item.value = data.value + '';
+
+	  gpio.open(parseInt(item.pin), gpio.OUTPUT);
+	  gpio.write(parseInt(item.pin), parseInt(item.value) === 1 ? gpio.HIGH : gpio.LOW);
 	  
-	  gpio.setup(parseInt(item.pin), gpio.DIR_OUT, function(error) {
-		  gpio.write(parseInt(item.pin), parseInt(item.value), function(error) {
-			  gpio.destroy(parseInt(item.pin), function(error) {
-				  that.values[item._id] = item.value;
-				  that.app.get('sockets').emit('gpio-output', {
-					id: item._id,
-					value: item.value
-				  });
-			  });
-		  });
-	  });
+	  that.values[item._id] = item.value;
+	  that.app.get('sockets').emit('gpio-output', {
+		id: item._id,
+		value: item.value
+	  });	  
     });
   };
 
